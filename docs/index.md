@@ -43,6 +43,7 @@ PostgreSQL在阿里云上的费用主要涉及：
 ![usage1.png](usage1.png)
 ![usage2.png](usage2.png)
 
+服务部署路径为/root/application/postgresql使用docker-compose部署
 ```
 sudo su root
 systemctl status postgresql
