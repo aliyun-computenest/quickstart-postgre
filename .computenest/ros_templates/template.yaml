@@ -233,12 +233,6 @@ Resources:
           - CreateVpcConditions
           - Ref: EcsVpc
           - Ref: VpcId
-      SecurityGroupIngress:
-        - PortRange: 5432/5432
-          Priority: 1
-          SourceCidrIp: 0.0.0.0/0
-          IpProtocol: tcp
-          NicType: internet
   InstanceGroup:
     Type: ALIYUN::ECS::InstanceGroup
     Properties:
@@ -270,7 +264,6 @@ Resources:
         Ref: EcsInstanceType
       SystemDiskCategory: cloud_essd
       SystemDiskSize: 200
-      InternetMaxBandwidthOut: 5
       IoOptimized: optimized
       MaxAmount: 1
   RunInstallCommand:
@@ -328,7 +321,7 @@ Outputs:
               - 0
               - Fn::GetAtt:
                   - InstanceGroup
-                  - PublicIps
+                  - PrivateIps
 Metadata:
   ALIYUN::ROS::Interface:
     ParameterGroups:

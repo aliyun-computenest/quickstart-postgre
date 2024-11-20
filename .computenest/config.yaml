@@ -1,6 +1,8 @@
 Service:
   RegionId: cn-hangzhou
   DeployType: ros
+  ServiceInstanceNameRule:
+    Prefix: pg
   OperationMetadata:
     StatusOperationConfigs:
       - TemplateName: '单机版'
