@@ -281,7 +281,7 @@ Resources:
         Fn::Sub:
           - |
             sed -i 's/POSTGRES_USER=[^\n]*/POSTGRES_USER=${POSTGRES_USER}/' /root/application/postgresql/.env
-            sed -i 's/POSTGRES_PASS=[^\n]*/POSTGRES_PASSWORD=${POSTGRES_PASSWORD}/' /root/application/postgresql/.env
+            sed -i 's/POSTGRES_PASSWORD=[^\n]*/POSTGRES_PASSWORD=${POSTGRES_PASSWORD}/' /root/application/postgresql/.env
             sed -i 's/POSTGRES_DB=[^\n]*/POSTGRES_DB=${POSTGRES_DB}/' /root/application/postgresql/.env
             systemctl start postgresql
           - RegionId:
