@@ -191,14 +191,14 @@ Parameters:
     Type: String
     Label: 用户名
     Default: pguser
-  POSTGRES_PASSWORD:
+  POSTGRES_PASS:
     Type: String
     AssociationProperty: ALIYUN::ECS::Instance::Password
     Label: 密码
     NoEcho: True
   POSTGRES_DB:
     Type: String
-    Label: 数据库名
+    Label: 数据库
     Default: postgres
 Resources:
   # 新建vpc
@@ -270,6 +270,7 @@ Resources:
         Ref: EcsInstanceType
       SystemDiskCategory: cloud_essd
       SystemDiskSize: 200
+      InternetMaxBandwidthOut: 5
       IoOptimized: optimized
       MaxAmount: 1
   RunInstallCommand:
@@ -285,11 +286,10 @@ Resources:
       CommandContent:
         Fn::Sub:
           - |
-            yum install -y postgresql
             wget '{{ computenest::file::aliyun-computenest_quickstart-postgresql-docker-compose }}' -O /root/application/docker_compose.tar
             tar -xvf /root/application/docker_compose.tar -C /root/application
 
-            cat > /etc/systemd/system/docker-compose-app.service <<EOF
+            cat > /etc/systemd/system/quickstart-postgresql.service <<EOF
             [Unit]
             Description=Docker Compose Application Service
             Requires=docker.service
@@ -307,10 +307,12 @@ Resources:
             WantedBy=multi-user.target
             EOF
 
-            echo 'POSTGRES_USER=${POSTGRES_USER}' >> /root/application/docker_compose/.env
-            echo 'POSTGRES_PASSWORD=${POSTGRES_PASSWORD}' >> /root/application/docker_compose/.env
-            echo 'POSTGRES_DB=${POSTGRES_DB}' >> /root/application/docker_compose/.env
-            systemctl start docker-compose-app
+            systemctl enable quickstart-postgresql
+
+            sed -i 's/POSTGRES_USER=[^\n]*/POSTGRES_USER=${POSTGRES_USER}/' /root/application/docker_compose/.env
+            sed -i 's/POSTGRES_PASS=[^\n]*/POSTGRES_PASS=${POSTGRES_PASS}/' /root/application/docker_compose/.env
+            sed -i 's/POSTGRES_DB=[^\n]*/POSTGRES_DB=${POSTGRES_DB}/' /root/application/docker_compose/.env
+            systemctl start quickstart-postgresql
           - RegionId:
               Ref: ALIYUN::Region
 Outputs: 
@@ -320,13 +322,13 @@ Outputs:
       zh-cn: postgres 访问页面。
     Value:
       Fn::Sub:
-        - postgres://${ServerAddress}:5432
+        - http://${ServerAddress}:5432
         - ServerAddress:
             Fn::Select:
               - 0
               - Fn::GetAtt:
                   - InstanceGroup
-                  - PrivateIps
+                  - PublicIps
 Metadata:
   ALIYUN::ROS::Interface:
     ParameterGroups:
@@ -352,7 +354,7 @@ Metadata:
           default: 可用区配置
       - Parameters:
           - POSTGRES_USER
-          - POSTGRES_PASSWORD
+          - POSTGRES_PASS
           - POSTGRES_DB
         Label:
           en: Software Configuration

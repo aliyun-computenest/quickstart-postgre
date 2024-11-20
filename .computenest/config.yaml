@@ -24,10 +24,8 @@ Service:
           - cn-zhangjiakou
           - cn-huhehaote
           - cn-wulanchabu
-          - cn-zhengzhou-jva
           - cn-hangzhou
           - cn-shanghai
-          - cn-shanghai-cloudspe
           - cn-nanjing
           - cn-shenzhen
           - cn-heyuan
@@ -48,7 +46,6 @@ Service:
           - eu-west-1
           - eu-central-1
           - me-east-1
-          - me-central-1
   ServiceType: private
   ServiceInfo:
     Locale: zh-CN
