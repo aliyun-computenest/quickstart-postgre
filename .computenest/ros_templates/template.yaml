@@ -191,7 +191,7 @@ Parameters:
     Type: String
     Label: 用户名
     Default: pguser
-  POSTGRES_PASS:
+  POSTGRES_PASSWORD:
     Type: String
     AssociationProperty: ALIYUN::ECS::Instance::Password
     Label: 密码
@@ -281,7 +281,7 @@ Resources:
         Fn::Sub:
           - |
             sed -i 's/POSTGRES_USER=[^\n]*/POSTGRES_USER=${POSTGRES_USER}/' /root/application/postgresql/.env
-            sed -i 's/POSTGRES_PASS=[^\n]*/POSTGRES_PASS=${POSTGRES_PASS}/' /root/application/postgresql/.env
+            sed -i 's/POSTGRES_PASS=[^\n]*/POSTGRES_PASSWORD=${POSTGRES_PASSWORD}/' /root/application/postgresql/.env
             sed -i 's/POSTGRES_DB=[^\n]*/POSTGRES_DB=${POSTGRES_DB}/' /root/application/postgresql/.env
             systemctl start postgresql
           - RegionId:
@@ -325,7 +325,7 @@ Metadata:
           default: 可用区配置
       - Parameters:
           - POSTGRES_USER
-          - POSTGRES_PASS
+          - POSTGRES_PASSWORD
           - POSTGRES_DB
         Label:
           en: Software Configuration
