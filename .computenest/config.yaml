@@ -1,8 +1,6 @@
 Service:
   RegionId: cn-hangzhou
   DeployType: ros
-  ServiceInstanceNameRule:
-    Prefix: pg
   OperationMetadata:
     StatusOperationConfigs:
       - TemplateName: '单机版'
@@ -12,11 +10,13 @@ Service:
           - Restart
     SupportBackup: true
   DeployMetadata:
+    ServiceInstanceNameRule:
+      Prefix: pg
     SupplierDeployMetadata:
-      FileArtifactRelation:
-        '{{ computenest::file::aliyun-computenest_quickstart-postgresql-docker-compose }}':
-          ArtifactId: ${Artifact.Artifact_1.ArtifactId}
-          ArtifactVersion: ${Artifact.Artifact_1.ArtifactVersion}
+      ArtifactRelation:
+        'centos_7_9_x64_20G_alibase_20240403.vhd':
+          ArtifactId: ${Artifact.EcsImage.ArtifactId}
+          ArtifactVersion: ${Artifact.EcsImage.ArtifactVersion}
     TemplateConfigs:
       - Name: 单机版
         Url: 'ros_templates/template.yaml'
@@ -54,22 +54,113 @@ Service:
     ShortDescription: docker compose deploy
     Image: 'resources/icons/service_logo.png'
 Artifact:
-  Artifact_1:
-    ArtifactType: File
-    ArtifactName: aliyun-computenest_quickstart-postgresql-docker-compose
+  EcsImage:
+    ArtifactType: EcsImage
+    ArtifactName: dify
+    Description: dify
     ArtifactProperty:
-      RegionId: cn-hangzhou
-      Url: 'resources/artifact_resources/docker_compose.tar'
-  Artifact_2:
-    ArtifactType: AcrImage
-    ArtifactName: AcrImage-postgres
-    ArtifactProperty:
-      RepoName: ${AcrImageBuilder.AcrImage_1.RepoName}
-      Tag: ${AcrImageBuilder.AcrImage_1.Tag}
-      RepoType: Public
+      RegionId: ${ImageBuilder.EcsImage.RegionId}
+      ImageId: ${ImageBuilder.EcsImage.SourceImageId}
+    SupportRegionIds:
+      - cn-beijing
+      - cn-hangzhou
+      - cn-shanghai
+      - ap-southeast-1
+      - cn-qingdao
+      - cn-zhangjiakou
+      - cn-huhehaote
+      - cn-wulanchabu
+      - cn-nanjing
+      - cn-shenzhen
+      - cn-heyuan
+      - cn-guangzhou
+      - cn-fuzhou
+      - cn-wuhan-lr
+      - cn-chengdu
+      - cn-hongkong
+      - ap-northeast-1
+      - ap-northeast-2
+      - ap-southeast-3
+      - ap-southeast-6
+      - ap-southeast-5
+      - ap-southeast-7
+      - us-east-1
+      - us-west-1
+      - eu-west-1
+      - me-east-1
+      - eu-central-1
 AcrImageBuilder:
-  AcrImage_1:
-    BuildType: DockerRepo
-    DockerRepoUrl: postgres
-    RepoName: postgres
-    Tag: latest
+  EcsImage:
+    ArtifactType: EcsImage
+    ArtifactName: EcsImage-postgres
+    Description: EcsImage-postgres
+    ArtifactProperty:
+      RegionId: ${ImageBuilder.EcsImage.RegionId}
+      ImageId: ${ImageBuilder.EcsImage.SourceImageId}
+    SupportRegionIds:
+      - cn-beijing
+      - cn-hangzhou
+      - cn-shanghai
+      - ap-southeast-1
+      - cn-qingdao
+      - cn-zhangjiakou
+      - cn-huhehaote
+      - cn-wulanchabu
+      - cn-nanjing
+      - cn-shenzhen
+      - cn-heyuan
+      - cn-guangzhou
+      - cn-fuzhou
+      - cn-wuhan-lr
+      - cn-chengdu
+      - cn-hongkong
+      - ap-northeast-1
+      - ap-northeast-2
+      - ap-southeast-2
+      - ap-southeast-3
+      - ap-southeast-6
+      - ap-southeast-5
+      - ap-south-1
+      - ap-southeast-7
+      - us-east-1
+      - us-west-1
+      - eu-west-1
+      - me-east-1
+      - eu-central-1
+ImageBuilder:
+  EcsImage:
+    RegionId: ap-southeast-1
+    SourceImageId: "{{oos:aliyun/services/computenest/images/aliyun_3_2104_docker_compose_2_27_compute_nest}}"
+    InstanceType: ecs.c6.large
+    InternetMaxBandwidthOut: 5
+    CommandType: RunShellScript
+    Timeout: 10800
+    Tags: [ ]
+    CommandContent: |-
+      #!/bin/bash
+
+      cd /root/application
+      git clone https://github.com/aliyun-computenest/quickstart-postgresql
+      mv quickstart-postgresql postgresql
+      cd postgresql
+      cp .env.example .env
+      docker pull postgres
+
+      cat > /etc/systemd/system/postgresql.service <<EOF
+      [Unit]
+      Description=Postgresql Application Service
+      Requires=docker.service
+      After=docker.service
+
+      [Service]
+      Type=oneshot
+      RemainAfterExit=yes
+      WorkingDirectory=/root/postgresql
+      ExecStart=/usr/bin/docker compose up -d
+      ExecStop=/usr/bin/docker compose down
+      TimeoutStartSec=0
+
+      [Install]
+      WantedBy=multi-user.target
+      EOF
+      systemctl enable postgresql
