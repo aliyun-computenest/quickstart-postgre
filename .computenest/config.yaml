@@ -56,8 +56,8 @@ Service:
 Artifact:
   EcsImage:
     ArtifactType: EcsImage
-    ArtifactName: dify
-    Description: dify
+    ArtifactName: EcsImag-postgresql
+    Description: EcsImag-postgresql
     ArtifactProperty:
       RegionId: ${ImageBuilder.EcsImage.RegionId}
       ImageId: ${ImageBuilder.EcsImage.SourceImageId}
