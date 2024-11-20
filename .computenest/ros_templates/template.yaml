@@ -293,7 +293,7 @@ Outputs:
       zh-cn: postgres 访问页面。
     Value:
       Fn::Sub:
-        - http://${ServerAddress}:5432
+        - postgresql://${ServerAddress}:5432
         - ServerAddress:
             Fn::Select:
               - 0
