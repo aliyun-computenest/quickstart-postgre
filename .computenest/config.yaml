@@ -139,6 +139,8 @@ ImageBuilder:
     CommandContent: |-
       #!/bin/bash
 
+      yum install -y postgresql
+
       cd /root/application
       git clone https://github.com/aliyun-computenest/quickstart-postgresql
       mv quickstart-postgresql postgresql
