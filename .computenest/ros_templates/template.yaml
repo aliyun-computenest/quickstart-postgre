@@ -266,7 +266,7 @@ Resources:
       SystemDiskSize: 200
       IoOptimized: optimized
       MaxAmount: 1
-      AllocatePulicipAddress: false
+      AllocatePublicIP: false
   RunInstallCommand:
     Type: ALIYUN::ECS::RunCommand
     Properties:
