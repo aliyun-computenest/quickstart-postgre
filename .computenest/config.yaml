@@ -52,7 +52,7 @@ Service:
   ServiceInfo:
     Locale: zh-CN
     ShortDescription: docker compose deploy
-    Image: 'resources/icons/service_logo.png'
+    Image: 'resources/icons/service_logo.jpg'
 Artifact:
   EcsImage:
     ArtifactType: EcsImage
